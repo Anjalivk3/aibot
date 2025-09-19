@@ -51,10 +51,17 @@ function App() {
             zIndex={{ xs: 9999, md: 1 }}
             boxShadow={{ xs: menuOpen ? 10 : 0, md: 0 }}
           >
-           hii first grid
+           <Sidebar />
           </Grid>
           <Grid item xs={12} md={9.5}>
-           hello
+            <Outlet
+              context={{
+                chat: chat,
+                setChat: setChat,
+                handleMobileMenu: setMenuOpen,
+              }}
+            />
+
           </Grid> 
 
 
