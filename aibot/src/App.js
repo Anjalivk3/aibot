@@ -51,7 +51,7 @@ function App() {
             zIndex={{ xs: 9999, md: 1 }}
             boxShadow={{ xs: menuOpen ? 10 : 0, md: 0 }}
           >
-           <Sidebar />
+           <Sidebar setChat={setChat} closeMenu={() => setMenuOpen(false)}/>
           </Grid>
           <Grid item xs={12} md={9.5}>
             <Outlet
@@ -63,9 +63,6 @@ function App() {
             />
 
           </Grid> 
-
-
-
         </Grid>
       </ThemeProvider>
     </ThemeContext.Provider>

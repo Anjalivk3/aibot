@@ -4,6 +4,8 @@ import { useOutletContext } from "react-router-dom";
 import Navbar from "../../Components/Navbar/Navbar";
 import { ThemeContext } from "../../Theme/ThemeContext";
 import { useContext } from "react";
+import Initialchat from "../../Components/Initialchat/Initialchat";
+import Botquestans from "../../Botquestans/Botquestans.json";
 
 function Home() {
   const [showModal, setShowModal] = useState(false);
@@ -15,7 +17,38 @@ function Home() {
   const { mode } = useContext(ThemeContext);
 
   // GENERATING AI RESPONSE
- 
+   const generateResponse = (input) => {
+    const response = Botquestans.find(
+      (item) => input.toLowerCase() == item.question.toLowerCase()
+    );
+
+    let answer = "Sorry, Did not understand your query!";
+
+    if (response != undefined) {
+      answer = response.response;
+      console.log("answer of quest" + answer);
+    }
+
+    setChat((prev) => [
+      ...prev,
+      {
+        type: "Human",
+        text: input,
+        time: new Date(),
+        id: chatId,
+      },
+      {
+        type: "AI",
+        text: answer,
+        time: new Date(),
+        id: chatId + 1,
+      },
+    ]);
+
+    setChatId((prev) => prev + 2);
+  };
+
+  console.log("chat.length :  " + chat.length);
   return (
     <Stack
       height={"100vh"}
@@ -28,7 +61,7 @@ function Home() {
       }}
     >
       <Navbar />
-
+      {chat.length == 0 && <Initialchat generateResponse={generateResponse} />}
    
     </Stack>
   );
