@@ -6,6 +6,9 @@ import { ThemeContext } from "../../Theme/ThemeContext";
 import { useContext } from "react";
 import Initialchat from "../../Components/Initialchat/Initialchat";
 import Botquestans from "../../Botquestans/Botquestans.json";
+import ChattingCard from "../../Components/Initialchat/ChattingCard";
+import ChatInput from "../../Components/ChatInput/ChatInput";
+import FeedbackModal from "../../Components/FeedbackModal/FeedbackModal";
 
 function Home() {
   const [showModal, setShowModal] = useState(false);
@@ -21,6 +24,7 @@ function Home() {
     const response = Botquestans.find(
       (item) => input.toLowerCase() == item.question.toLowerCase()
     );
+    console.log("find response: " + response.response);
 
     let answer = "Sorry, Did not understand your query!";
 
@@ -49,6 +53,14 @@ function Home() {
   };
 
   console.log("chat.length :  " + chat.length);
+
+   //AUTOSCROLL TO LAST ELEMENT
+  useEffect(() => {
+    listRef.current?.lastElementChild?.scrollIntoView();
+  }, [scrollToBottom]);
+
+
+
   return (
     <Stack
       height={"100vh"}
@@ -62,7 +74,53 @@ function Home() {
     >
       <Navbar />
       {chat.length == 0 && <Initialchat generateResponse={generateResponse} />}
-   
+      
+      {chat.length > 0 && (
+        <Stack
+          height={1}
+          flexGrow={0}
+          p={{ xs: 2, md: 3 }}
+          spacing={{ xs: 2, md: 3 }}
+          sx={{
+            overflowY: "auto",
+            "&::-webkit-scrollbar": {
+              width: "10px",
+            },
+            "&::-webkit-scrollbar-track": {
+              boxShadow: "inset 0 0 8px rgba(0,0,0,0.1)",
+              borderRadius: "8px",
+            },
+            "&::-webkit-scrollbar-thumb": {
+              backgroundColor: "rgba(151, 133, 186,0.4)",
+              borderRadius: "8px",
+            },
+          }}
+          ref={listRef}
+        >
+          {chat.map((item, index) => (
+            <ChattingCard
+              details={item}
+              key={index}
+              updateChat={setChat}
+              setSelectedChatId={setSelectedChatId}
+              showFeedbackModal={() => setShowModal(true)}
+            />
+          ))}
+        </Stack>
+      )}
+
+      <ChatInput
+        generateResponse={generateResponse}
+        setScroll={setScrollToBottom}
+        chat={chat}
+        clearChat={() => setChat([])}
+      />
+      <FeedbackModal
+        open={showModal}
+        updateChat={setChat}
+        chatId={selectedChatId}
+        handleClose={() => setShowModal(false)}
+      />
     </Stack>
   );
 }
